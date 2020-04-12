@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="generator" content="Docusaurus">
+
+
+<title data-react-helmet="true">sync | Conflux</title>
+
+<meta data-react-helmet="true" http-equiv="x-ua-compatible" content="ie=edge"><meta data-react-helmet="true" property="og:title" content="Conflux"><meta data-react-helmet="true" name="twitter:card" content="summary"><meta data-react-helmet="true" name="description" content="#Block Synchronization Process"><meta data-react-helmet="true" property="og:description" content="#Block Synchronization Process"><meta data-react-helmet="true" property="og:url" content="https://devdoctest.conflux-chain.org/docs/conflux-doc/docs/sync">
+
+<link data-react-helmet="true" rel="shortcut icon" href="/img/favicon.ico">
+
+
+<link rel="stylesheet" href="/styles.dfe3753f.css">
+
+
+<link rel="preload" href="/styles.955d14ed.js" as="script">
+
+<link rel="preload" href="/runtime~main.774d6fd4.js" as="script">
+
+<link rel="preload" href="/main.56343f6a.js" as="script">
+
+<link rel="preload" href="/1.7609ea44.js" as="script">
+
+<link rel="preload" href="/2.9d63e91e.js" as="script">
+
+<link rel="preload" href="/3.a47df0e9.js" as="script">
+
+<link rel="preload" href="/1be78505.e7e4c66a.js" as="script">
+
+<link rel="preload" href="/20ac7829.951cd377.js" as="script">
+
+<link rel="preload" href="/17896441.0a0ec1a2.js" as="script">
+
+<link rel="preload" href="/9296fd2d.7be2a82a.js" as="script">
+
+</head>
+<body>
+<script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=window.matchMedia("(prefers-color-scheme: dark)"),n=function(){var t=null;try{t=localStorage.getItem("theme")}catch(t){}return t}();null!==n?t(n):e.matches&&t("dark")}()</script>
+<div id="__docusaurus">
+<nav class="navbar navbar--light navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><div aria-label="Navigation bar toggle" class="navbar__toggle" role="button" tabindex="0"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" role="img" focusable="false"><title>Menu</title><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></div><a aria-current="page" class="navbar__brand active" href="/"><img class="navbar__logo" src="/img/logo.svg" alt="Conflux Logo"><strong class="navbar__title">Conflux Developer</strong></a></div><div class="navbar__items navbar__items--right"><a class="navbar__item navbar__link" target="_blank" rel="noopener noreferrer" href="https://github.com/Conflux-Chain/conflux-developer-site">GitHub</a><div class="react-toggle react-toggle--disabled displayOnlyInLargeViewport_1gtM"><div class="react-toggle-track"><div class="react-toggle-track-check"><span class="toggle_keGJ moon_1gwN"></span></div><div class="react-toggle-track-x"><span class="toggle_keGJ sun_3CPA"></span></div></div><div class="react-toggle-thumb"></div><input type="checkbox" disabled="" aria-label="Dark mode toggle" class="react-toggle-screenreader-only"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div><div class="navbar-sidebar"><div class="navbar-sidebar__brand"><a aria-current="page" class="navbar__brand active" href="/"><img class="navbar__logo" src="/img/logo.svg" alt="Conflux Logo"><strong class="navbar__title">Conflux Developer</strong></a></div><div class="navbar-sidebar__items"><div class="menu"><ul class="menu__list"><li class="menu__list-item"><a class="menu__link" target="_blank" rel="noopener noreferrer" href="https://github.com/Conflux-Chain/conflux-developer-site">GitHub</a></li></ul></div></div></div></nav><div class="main-wrapper"><div class="docPage_1kjD"><main class="docMainContainer_FFX1"><div class="padding-vert--lg"><div class="container"><div class="row"><div class="col docItemCol_2GOA"><div class="docItemContainer_2cwg"><article><header><h1 class="docTitle_1vWb">sync</h1></header><div class="markdown"><p>#Block Synchronization Process</p><p>##Synchronization Graph
+Synchronization graph is designed to organize newly arrived blocks (received from the peers, loaded from local storage, or self-mined) even when their past blocks haven’t been completely collected. Once all the past blocks of a block have been collected in synchronization graph, it will be dispatched to consensus graph for further processing.</p><p>The block header and block body enter the synchronization graph in separate processes, because, typically, the block header and body are transferred separately in peer-to-peer layer. The graph structure in the synchronization graph is constructed by block header arrival. Each block is represented as a node in the graph structure, and the nodes are linked through the parent/child and referrer/referee relations between blocks. </p><p>Synchronization graph checks the validity of arriving blocks. The blocks that do not pass the validity checks are invalid and will not be dispatched to consensus graph further. The following validity checks are conducted:</p><ol><li>Check whether the parent or referees of a block are invalid. If one of them is invalid, the block is invalid too. </li><li>Check whether the nonce in the block header is correctly set based on the difficulty in the block header, i.e., the miner of the block correctly solved the POW puzzle.</li><li>Check whether the number of referees in the block header is larger than a threshold (200). If so, the block is invalid.</li><li>Check whether there are duplicated hashes in the parent and referees of a block. If so, the block is invalid.</li><li>Check whether the length (in byte) of the custom field in the block header is beyond a threshold (64). If so, the block is invalid.</li><li>Check whether the height of a block is larger than the height of its parent block by 1. If NOT, the block is invalid.</li><li>Check whether the timestamp of a block is larger than or equal to the timestamp of its parent block. If NOT, the block is invalid.</li><li>Check the block gas limit is correctly set. </li><li>Check the block difficulty is correctly set.</li><li>Check whether the block header contains the correct transaction root according to the transactions in the block body.</li><li>Check whether every transaction in the block body has valid signature structure.</li><li>Check whether the total size of the transactions in the block body is larger than the block size limit (800KB). If so, the block is invalid.</li><li>Check whether the total gas limit of transactions in the block body is larger than the block gas limit. If so, the block is invalid.</li></ol><p>The validity checks 1~9 only use information in block header. The validity checks 10~13 use the information in block body. The checks 6~9 require graph structure information like parent information and are conducted on a block when the headers of all its past blocks have entered the synchronization graph. To speed up the block relay process, when both the header and body of a block have entered the synchronization graph and the headers of all its past blocks have also entered, the block can be relayed to the peers. It is not needed to wait for the bodies of all the past blocks of a block to be received in order to relay the block. This may lead to relaying invalid blocks, but since all the relayed blocks already have valid difficulty and POW settings, the attackers who make this case also pay the corresponding cost of computation power. </p><p>###Graph Structure Maintenance
+The node structure of synchronization graph is defined as follows:</p><div class="mdxCodeBlock_iHAB"><pre class="prism-code language-undefined codeBlock_19pQ"><button type="button" aria-label="Copy code to clipboard" class="copyButton_1BYj">Copy</button><code class="codeBlockLines_2n9r" style="color:#bfc7d5;background-color:#292d3e"><div class="token-line" style="color:#bfc7d5"><span class="token plain">pub struct SynchronizationGraphNode {</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    pub block_header: Arc&lt;BlockHeader&gt;,</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    // The status of graph connectivity in the current block view.</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    pub graph_status: u8,</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    // Whether the block body is ready.</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    pub block_ready: bool,</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    // Whether parent is in old era and already reclaimed</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    pub parent_reclaimed: bool,</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    // The index of the parent of the block.</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    pub parent: usize,</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    // The indices of the children of the block.</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    pub children: Vec&lt;usize&gt;,</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    // The indices of the blocks referenced by the block.</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    pub referees: Vec&lt;usize&gt;,</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    // The number of blocks referenced by the block but</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    // haven&#x27;t been inserted in synchronization graph.</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    pub pending_referee_count: usize,</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    // The indices of the blocks referencing the block.</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    pub referrers: Vec&lt;usize&gt;,</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    // the timestamp in seconds when graph_status updated</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">    pub last_update_timestamp: u64,</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">}</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain" style="display:inline-block">
+</span></div></code></pre></div><p>The graph structure is maintained by the fields parent, children, referees, and referrers. Each node has a graph_status field representing its status changing during the period from the time when the header arrives to the time when the block is ready to be dispatched to consensus graph. </p><p>When a block header enters synchronization graph, it is first checked whether this block is already processed by synchronization graph.
+If not, it will be added into the graph and the graph structure will be updated accordingly.
+First, the <em>parent/children</em> edge will be established.
+If the parent of this newly arrived block hasn’t come into synchronization graph, the graph uses a collection children_by_hash to handle this.
+This is a map from block hash to a set of graph nodes.
+In this case, the graph node representing this newly arrived block header will be added into the graph node set mapped from the parent block hash of this block.
+This functions as a bookkeeping to remember the relation between the parent block hash and this newly arrived block.
+Once this parent block comes into the synchronization graph in the future, the corresponding edge between the parent and child nodes can be established and the hash of the parent block will be removed from the children_by_hash map.
+Secondly, the <em>referees/referrers</em> edges will also be established.
+Similarly, the synchronization graph uses a map referrers_by_hash to remember the relation between the unarrived referee block and the newly arrived referrer block.
+The graph node also maintains a pending_referee_count field to remember how many referees of the block haven’t come into the synchronization graph.</p><p>A graph node may be in the following 5 status:</p><div class="mdxCodeBlock_iHAB"><pre class="prism-code language-undefined codeBlock_19pQ"><button type="button" aria-label="Copy code to clipboard" class="copyButton_1BYj">Copy</button><code class="codeBlockLines_2n9r" style="color:#bfc7d5;background-color:#292d3e"><div class="token-line" style="color:#bfc7d5"><span class="token plain">// This block is an invalid block.</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">const BLOCK_INVALID: u8 = 0;</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">// Just get the header of the block.</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">const BLOCK_HEADER_ONLY: u8 = 1;</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">// The headers of all the blocks on the path from genesis to this block have</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">// already entered synchronization graph. </span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">const BLOCK_HEADER_PARENTAL_TREE_READY: u8 = 2;</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">// The headers of all the blocks in the past set of this block have already entered</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">// synchronization graph. </span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">const BLOCK_HEADER_GRAPH_READY: u8 = 3;</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">// Both the headers and bodies of all the blocks in the past set of this block have</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">// entered synchronization graph.</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">const BLOCK_GRAPH_READY: u8 = 4;</span></div></code></pre></div><p>When a block header just enters the synchronization graph and triggers a new graph node being created and added in the graph, the initial status of the node is BLOCK_HEADER_ONLY.
+And according to this graph structure update, the status of other nodes in the graph may also change.
+The effects of these changes are fulfilled by conducting a BFS traversal from the node to all its descendants.
+During this traversal process, for each node,
+1) if it is invalid, all its descendants are invalid;
+2) if it is new to be BLOCK_HEADER_GRAPH_READY, some graph-related validity checks (6~9) are applied on it.
+If it passes these checks, it is then checked whether its block body has already entered synchronization graph (by checking the block_ready field of the graph node).
+If so, this block is ready to be relayed. And this block may make some of its descendants become BLOCK_HEADER_PARENTAL_TREE_READY or BLOCK_HEADER_GRAPH_READY.
+Note that this cannot make its descendants become BLOCK_GRAPH_READY since the original node (at the starting point of the BFS process) for the newly arrived block header can only be BLOCK_HEADER_GRAPH_READY;
+3) if it is new to be BLOCK_HEADER_PARENTAL_TREE_READY, it may make some of its descendants (following the child edge) become BLOCK_HEADER_PARENTAL_TREE_READY.</p><p>When a block body just enters the synchronization graph, the corresponding graph node should already exist in synchronization graph, otherwise, the block will be ignored (this may happen if it is garbage collected).
+The block_ready field of this node will be set as true now.
+The block then goes through the corresponding validity checks (10~13).
+And similarly, this newly arrived block body will change the status of some of its descendants.
+This is also done by conducting a BFS traversal from this node.
+During this traversal process, for each node,
+1) if it is invalid, all its descendants are invalid;
+2) if it is new to be BLOCK_GRAPH_READY, it is dispatched to consensus graph.
+It may make some of its descendants become BLOCK_GRAPH_READY.
+If the block with the newly arrived body is at least BLOCK_HEADER_GRAPH_READY, it becomes ready to be relayed.</p><p>###Garbage Collect Dangling Blocks
+Some (adversarial) nodes may send to a full node some blocks that cannot be in status of BLOCK_GRAPH_READY forever, e.g., to conduct DDOS attack or to be in the case of serious message delay so that the block does not belong to the current checkpoint era anymore.
+These blocks will be held in synchronization graph but should be garbage-collected eventually to avoid wasting memory resources.
+In order to do this, the synchronization graph maintains a set of blocks representing the frontier of these graph-unready blocks.
+A block should be a frontier block if
+1) the block is not in status of BLOCK_GRAPH_READY but its parent block is; or
+2) its parent block has not come into the synchronization graph. </p><p>To garbage collect these graph-unready blocks, it starts from the frontier of these blocks, and removes them and all their descendants that can be reached through BFS traversal by following children and referrers edges.
+The reason that we must remove all the descendants of the frontier blocks from the synchronization graph is related to the design of block synchronization process.
+During the block synchronization, it follows the parent and referees edges of a newly arrived block and tries to fetch the missing ancestors.
+When it encounters such an ancestor block that already exists in synchronization graph, the process stops following its parent and referees edges further.
+Therefore, if the ancestor block is the descendant block of some frontier graph-unready block that has already been garbage collected, this removed unready block will never get chance to be fetched from peer again.
+However, this removed frontier block may be graph-unready merely because a temporary bad network situation which may recover later.</p><p>This garbage collection process is triggered periodically, and in each of this process, it only tries to remove frontier blocks and their descendants which have already been in unready status for a long time.
+In order to get the timing information, each graph node has a field last_update_timestamp to remember the timestamp of the last update of the node status.</p><p>One optimization in the synchronization process is that it does not always fetch from peers the parent and referees of newly arrived block that are missing in memory.
+It checks whether the height of the block is far less than the height of the local best epoch block.
+If so, it is highly probable that the ancestors of this block exist in local database, so it deserves the effort of trying to get these blocks from local database first.
+It is also an effective way to avoid unnecessary backward tree-graph traversing merely according to the peer information, which we also cover a bit more detail in <a href="/docs/conflux-doc/docs/recovery">Recovery Process</a> section. </p></div></article><div class="margin-vert--xl"><div class="row"><div class="col"><a href="https://github.com/Conflux-Chain/conflux-developer-site/edit/master/docs/conflux-doc/docs/sync.md" target="_blank" rel="noreferrer noopener"><svg fill="currentColor" height="1.2em" width="1.2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 40 40" style="margin-right:0.3em;vertical-align:sub"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col text--right"><em><small>Last updated on <time datetime="2020-04-12T13:51:06.000Z" class="docLastUpdatedAt_1sqk">4/12/2020</time> by <strong>yqrashawn</strong></small></em></div></div></div><div class="margin-vert--lg"><nav class="pagination-nav"><div class="pagination-nav__item"></div><div class="pagination-nav__item pagination-nav__item--next"></div></nav></div></div></div></div></div></div></main></div></div><footer class="footer footer--dark"><div class="container"><div class="row footer__links"><div class="col footer__col"><h4 class="footer__title">Docs</h4><ul class="footer__items"><li class="footer__item"><a class="footer__link-item" href="/docs/introduction/en/conflux_overview">Overview</a></li><li class="footer__item"><a class="footer__link-item" href="/docs/conflux-portal/docs/en/portal/introduction">Portal</a></li></ul></div><div class="col footer__col"><h4 class="footer__title">Community</h4><ul class="footer__items"><li class="footer__item"><a class="footer__link-item" target="_blank" rel="noopener noreferrer" href="https://bounty.conflux-chain.org">Bounty</a></li></ul></div><div class="col footer__col"><h4 class="footer__title">Social</h4><ul class="footer__items"><li class="footer__item"><a class="footer__link-item" target="_blank" rel="noopener noreferrer" href="https://github.com/Conflux-Chain">GitHub</a></li><li class="footer__item"><a class="footer__link-item" target="_blank" rel="noopener noreferrer" href="https://twitter.com/Conflux_Network">Twitter</a></li></ul></div></div><div class="text--center"><div>Copyright © 2020 Conflux Chain, Inc. Built with Docusaurus.</div></div></div></footer>
+</div>
+
+<script src="/styles.955d14ed.js"></script>
+
+<script src="/runtime~main.774d6fd4.js"></script>
+
+<script src="/main.56343f6a.js"></script>
+
+<script src="/1.7609ea44.js"></script>
+
+<script src="/2.9d63e91e.js"></script>
+
+<script src="/3.a47df0e9.js"></script>
+
+<script src="/1be78505.e7e4c66a.js"></script>
+
+<script src="/20ac7829.951cd377.js"></script>
+
+<script src="/17896441.0a0ec1a2.js"></script>
+
+<script src="/9296fd2d.7be2a82a.js"></script>
+
+
+</body>
+</html>
