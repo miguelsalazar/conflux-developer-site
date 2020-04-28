@@ -18,7 +18,7 @@
 
 <link rel="preload" href="/styles.e5820677.js" as="script">
 
-<link rel="preload" href="/runtime~main.2ea77e72.js" as="script">
+<link rel="preload" href="/runtime~main.93f917ff.js" as="script">
 
 <link rel="preload" href="/main.efeef091.js" as="script">
 
@@ -34,7 +34,7 @@
 
 <link rel="preload" href="/17896441.a34739fd.js" as="script">
 
-<link rel="preload" href="/b4c11e55.9928304a.js" as="script">
+<link rel="preload" href="/b4c11e55.b2e7125e.js" as="script">
 
 </head>
 <body>
@@ -47,12 +47,12 @@ there&#x27;s no need to pre-install snappy, and the library will be statically l
 </span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">assert_eq!(decompressed == input);</span></div></code></pre></div><div class="mdxCodeBlock_iHAB"><pre class="prism-code language-rust codeBlock_19pQ"><button type="button" aria-label="Copy code to clipboard" class="copyButton_1BYj">Copy</button><code class="codeBlockLines_2n9r" style="color:#bfc7d5;background-color:#292d3e"><div class="token-line" style="color:#bfc7d5"><span class="token plain">use parity_snappy as snappy;</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain" style="display:inline-block">
 </span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">let input: Vec&lt;u8&gt; = ...;</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">let mut compressed = Vec::with_capacity(snappy::max_compressed_len(input.len()));</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">let mut decompressed = Vec::with_capacity(input.len());</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain" style="display:inline-block">
 </span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">let len = snappy::compress_into(&amp;input, &amp;mut compressed);</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">let _ = snappy::decompress_into(&amp;compressed[..len], &amp;mut decompressed);</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain" style="display:inline-block">
-</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">assert_eq!(decompressed == input);</span></div></code></pre></div></div></article><div class="margin-vert--xl"><div class="row"><div class="col"><a href="https://github.com/Conflux-Chain/conflux-developer-site/edit/master/docs/conflux-rust/core/benchmark/storage/parity-snappy/rust-snappy/README.md" target="_blank" rel="noreferrer noopener"><svg fill="currentColor" height="1.2em" width="1.2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 40 40" style="margin-right:0.3em;vertical-align:sub"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col text--right"><em><small>Last updated on <time datetime="2020-04-28T12:46:33.000Z" class="docLastUpdatedAt_1sqk">4/28/2020</time> by <strong>ConfluxBot</strong></small></em></div></div></div><div class="margin-vert--lg"><nav class="pagination-nav"><div class="pagination-nav__item"></div><div class="pagination-nav__item pagination-nav__item--next"></div></nav></div></div></div><div class="col col--3"><div class="tableOfContents_TbNY"><ul class="contents contents__left-border"><li><a href="#example" class="contents__link">Example</a></li></ul></div></div></div></div></div></main></div></div><footer class="footer footer--dark"><div class="container"><div class="row footer__links"><div class="col footer__col"><h4 class="footer__title">Docs</h4><ul class="footer__items"><li class="footer__item"><a class="footer__link-item" href="/docs/introduction/en/conflux_overview">Overview</a></li><li class="footer__item"><a class="footer__link-item" href="/docs/conflux-portal/docs/en/portal/introduction">Portal</a></li></ul></div><div class="col footer__col"><h4 class="footer__title">Community</h4><ul class="footer__items"><li class="footer__item"><a class="footer__link-item" target="_blank" rel="noopener noreferrer" href="https://bounty.conflux-chain.org">Bounty</a></li></ul></div><div class="col footer__col"><h4 class="footer__title">Social</h4><ul class="footer__items"><li class="footer__item"><a class="footer__link-item" target="_blank" rel="noopener noreferrer" href="https://github.com/Conflux-Chain">GitHub</a></li><li class="footer__item"><a class="footer__link-item" target="_blank" rel="noopener noreferrer" href="https://twitter.com/Conflux_Network">Twitter</a></li></ul></div></div><div class="text--center"><div>Copyright © 2020 Conflux Chain, Inc. Built with Docusaurus.</div></div></div></footer>
+</span></div><div class="token-line" style="color:#bfc7d5"><span class="token plain">assert_eq!(decompressed == input);</span></div></code></pre></div></div></article><div class="margin-vert--xl"><div class="row"><div class="col"><a href="https://github.com/Conflux-Chain/conflux-developer-site/edit/master/docs/conflux-rust/core/benchmark/storage/parity-snappy/rust-snappy/README.md" target="_blank" rel="noreferrer noopener"><svg fill="currentColor" height="1.2em" width="1.2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 40 40" style="margin-right:0.3em;vertical-align:sub"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col text--right"><em><small>Last updated on <time datetime="2020-04-28T14:42:00.000Z" class="docLastUpdatedAt_1sqk">4/28/2020</time> by <strong>ConfluxBot</strong></small></em></div></div></div><div class="margin-vert--lg"><nav class="pagination-nav"><div class="pagination-nav__item"></div><div class="pagination-nav__item pagination-nav__item--next"></div></nav></div></div></div><div class="col col--3"><div class="tableOfContents_TbNY"><ul class="contents contents__left-border"><li><a href="#example" class="contents__link">Example</a></li></ul></div></div></div></div></div></main></div></div><footer class="footer footer--dark"><div class="container"><div class="row footer__links"><div class="col footer__col"><h4 class="footer__title">Docs</h4><ul class="footer__items"><li class="footer__item"><a class="footer__link-item" href="/docs/introduction/en/conflux_overview">Overview</a></li><li class="footer__item"><a class="footer__link-item" href="/docs/conflux-portal/docs/en/portal/introduction">Portal</a></li></ul></div><div class="col footer__col"><h4 class="footer__title">Community</h4><ul class="footer__items"><li class="footer__item"><a class="footer__link-item" target="_blank" rel="noopener noreferrer" href="https://bounty.conflux-chain.org">Bounty</a></li></ul></div><div class="col footer__col"><h4 class="footer__title">Social</h4><ul class="footer__items"><li class="footer__item"><a class="footer__link-item" target="_blank" rel="noopener noreferrer" href="https://github.com/Conflux-Chain">GitHub</a></li><li class="footer__item"><a class="footer__link-item" target="_blank" rel="noopener noreferrer" href="https://twitter.com/Conflux_Network">Twitter</a></li></ul></div></div><div class="text--center"><div>Copyright © 2020 Conflux Chain, Inc. Built with Docusaurus.</div></div></div></footer>
 </div>
 
 <script src="/styles.e5820677.js"></script>
 
-<script src="/runtime~main.2ea77e72.js"></script>
+<script src="/runtime~main.93f917ff.js"></script>
 
 <script src="/main.efeef091.js"></script>
 
@@ -68,7 +68,7 @@ there&#x27;s no need to pre-install snappy, and the library will be statically l
 
 <script src="/17896441.a34739fd.js"></script>
 
-<script src="/b4c11e55.9928304a.js"></script>
+<script src="/b4c11e55.b2e7125e.js"></script>
 
 
 </body>
